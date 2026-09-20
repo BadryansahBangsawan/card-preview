@@ -17,7 +17,7 @@ Menu extra for macOS 14+. It lives on the **right** of the menu bar and does not
 
 ## Features
 
-- GET `http` and `https` only. HTML capped at 1 MB; image GET capped at 5 MB.
+- GET `http` and `https` only. HTML capped at 1 MB; image GET capped at 5 MB. HTTP to HTTPS redirects are followed; other schemes are rejected.
 - Image scaled to a maximum height of 160 pt.
 - **Copy title** and **Copy URL**. Recents cap at 20.
 
