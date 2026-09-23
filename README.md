@@ -1,10 +1,18 @@
+<div align="center">
+
 # Card Preview
 
+**Fetch Open Graph and Twitter card tags from an `http`/`https` URL. Title, description, image — or No Open Graph or Twitter card tags.**
+
+Menu extra for macOS 14+. Lives on the **right** of the menu bar. No Dock icon.
+
+<br/>
+
 [![Build](https://github.com/BadryansahBangsawan/card-preview/actions/workflows/ci.yml/badge.svg)](https://github.com/BadryansahBangsawan/card-preview/actions/workflows/ci.yml)
+[![Latest Release](https://img.shields.io/github/v/release/BadryansahBangsawan/card-preview?style=flat-square)](https://github.com/BadryansahBangsawan/card-preview/releases/latest)
+[![macOS](https://img.shields.io/badge/macOS-14%2B-black?style=flat-square&logo=apple)](https://github.com/BadryansahBangsawan/card-preview/releases/latest)
 
-Preview the Open Graph and Twitter card a URL would share — title, description, image, and canonical URL.
-
-Menu extra for macOS 14+. It lives on the **right** of the menu bar and does not show a Dock icon.
+<br/>
 
 ![Card Preview panel](docs/panel.png)
 
@@ -12,35 +20,51 @@ Menu extra for macOS 14+. It lives on the **right** of the menu bar and does not
 |---|---|
 | Product | `CardPreview` |
 | Bundle ID | `engineer.badry.cardpreview` |
-| Status item | SF Symbol `photo.on.rectangle` (title: first 24 graphemes of the page title, or `Card Preview`) |
+| Status item | SF Symbol `photo.on.rectangle` (first 24 graphemes of the page title, or `Card Preview`) |
 | Panel | opaque ~360×420 pt |
 
-## Features
+</div>
 
-- GET `http` and `https` only. HTML capped at 1 MB; image GET capped at 5 MB. HTTP to HTTPS redirects are followed; other schemes are rejected.
-- Image scaled to a maximum height of 160 pt.
-- **Copy title** and **Copy URL**. Recents cap at 20.
+---
 
-### Tag precedence
+## What you get
 
-| Field | Order |
+| Piece | Behavior |
 |---|---|
-| Title | `og:title` → `twitter:title` → HTML `<title>` |
-| Description | `og:description` → `twitter:description` |
-| Image | `og:image` → `twitter:image` (resolved against the page URL) |
-| URL | `og:url` → `rel=canonical` → the request URL |
+| **Fetch** | GET `http` and `https` only. HTML capped at 1 MB. Image GET capped at 5 MB. Image scaled to 160 pt max height. HTTP to HTTPS redirects are followed; other schemes are rejected. |
+| **Tags** | Title: `og:title` → `twitter:title` → HTML `<title>`. Description: `og:description` → `twitter:description`. Image: `og:image` → `twitter:image`. URL: `og:url` → `rel=canonical` → request URL. |
+| **Copy** | **Copy title** and **Copy URL**. Recents cap at 20. |
+| **Empty** | No `og:` / `twitter:` title, description, or image → **No Open Graph or Twitter card tags.** HTML `<title>` still shows. |
+| **Login** | Open at Login from Settings (`SMAppService`). |
 
-Also shows `og:site_name`, `og:type`, and `twitter:card` when present.
+---
 
-If none of title, description, or image come from `og:` / `twitter:` tags, the panel shows **No Open Graph or Twitter card tags.** HTML `<title>` still appears if the page has one.
+## Download
 
-## Requirements
+| File | Use |
+|---|---|
+| **`CardPreview.app.zip`** | Unzip, drag **CardPreview** onto **Applications** |
 
-- macOS 14 Sonoma or later
-- Swift 5.9 or later (Xcode or Command Line Tools) only if you build from source
-- Network for Fetch
+**[Releases](https://github.com/BadryansahBangsawan/card-preview/releases/latest)**
+
+---
 
 ## Install
+
+### Zip
+
+1. Download `CardPreview.app.zip` from [Releases](https://github.com/BadryansahBangsawan/card-preview/releases/latest).
+2. Unzip. Drag **CardPreview** onto **Applications**.
+3. First open (ad-hoc signed):
+
+```bash
+xattr -cr /Applications/CardPreview.app
+open /Applications/CardPreview.app
+```
+
+Still blocked: System Settings → Privacy & Security → Open Anyway.
+
+### Source
 
 ```bash
 git clone https://github.com/BadryansahBangsawan/card-preview.git
@@ -51,19 +75,19 @@ xattr -cr /Applications/CardPreview.app
 open /Applications/CardPreview.app
 ```
 
-Ad-hoc signed (`codesign -s -`). If Gatekeeper blocks it or says it is damaged, run the `xattr` line. If it is still blocked: System Settings → Privacy & Security → Open Anyway.
-
 Do not run `dist/CardPreview.app` while `/Applications/CardPreview.app` is running (same bundle ID).
 
-Enable **Open at Login** from Settings if you want it after reboot.
+---
 
 ## How to open
 
 This is an `LSUIElement` extra. Proof it is running is the **photo.on.rectangle** status item on the **right** of the menu bar, not a window from Finder or Launchpad.
 
-1. Click that extra. The panel is opaque (~360×420), not a 10px strip.
+1. Click that extra. The panel is opaque ~360×420 pt, not a 10px strip.
 2. If the bar is full, look behind the Control Center overflow chevron **«**.
-3. Double-clicking the app in Finder/Launchpad only changes the left-side app name. That is expected. There is no Dock icon.
+3. Double-clicking in Finder/Launchpad only changes the left-side app name. That is expected. There is no Dock icon.
+
+---
 
 ## Usage
 
@@ -71,38 +95,48 @@ This is an `LSUIElement` extra. Proof it is running is the **photo.on.rectangle*
 2. Enter an `https://` URL and click **Fetch**.
 3. Read title, description, image, and URL.
 4. **Copy title** / **Copy URL**. Click a recent to prefill.
-5. **Settings** at the bottom of the panel: Open at Login, Quit.
-
-### Example
+5. **Settings** at the bottom: Open at Login, Quit.
 
 `https://ogp.me` → title **Open Graph protocol**, description, and `https://ogp.me/logo.png`.
 
 `https://example.com` → **No Open Graph or Twitter card tags.** HTML title **Example Domain** still shows.
 
+---
+
 ## Permissions
 
-Network only. No Accessibility or Screen Recording.
+No TCC prompts. `Info.plist` sets `NSAllowsArbitraryLoads` so `http` hosts are reachable.
+
+---
 
 ## Data
 
 | What | Where |
 |---|---|
 | Recents | `~/Library/Application Support/Card Preview/recents.json` |
-| Open at Login | `SMAppService.mainApp` |
+| Open at Login | `SMAppService.mainApp` (Settings toggle) |
 
-A missing recents file is an empty list. A file that will not decode is an empty list plus a red banner. The app does not crash.
+A missing recents file is an empty list. A file that will not decode is an empty list plus a red banner. The extra does not crash.
+
+---
 
 ## Privacy
 
 Fetch uses an ephemeral `URLSession`. The URL you type leaves this Mac only as that HTTP request (HTML, then the image URL if one exists).
 
+---
+
 ## Uninstall
 
-Delete `/Applications/CardPreview.app`. Turn off Open at Login in Settings first if you enabled it.
+Delete `/Applications/CardPreview.app`. Then:
 
 ```bash
 rm -rf "$HOME/Library/Application Support/Card Preview"
 ```
+
+Turn off **Card Preview** in System Settings → General → Login Items if it remains.
+
+---
 
 ## Troubleshooting
 
@@ -115,18 +149,44 @@ rm -rf "$HOME/Library/Application Support/Card Preview"
 | **No Open Graph or Twitter card tags.** | The page has no `og:` / `twitter:` title, description, or image. |
 | **HTML truncated to 1MB.** | Only the first megabyte was parsed. |
 | Image URL as text, no picture | Image download or decode failed; the red label has the error. |
-| ~10px empty strip under the bar | Reinstall from this repo (panel min height 420). |
+| ~10px empty strip under the bar | Reinstall from this repo. |
 
-## Development
+---
+
+## Build from source
 
 ```bash
-swift build
+git clone https://github.com/BadryansahBangsawan/card-preview.git
+cd card-preview
 swift build -c release --product CardPreview
 bash package-app.sh
+open dist/CardPreview.app
 ```
 
-Layout: `Sources/` (SwiftPM executable), `Info.plist`, `Assets/AppIcon.icns`, `package-app.sh`. Never commit `dist/`. `FunTheme.swift` is copied verbatim (no shared package).
+Tag `v*` runs CI: `CardPreview.app.zip`. Never commit `dist/`.
 
-## License
+Layout: `Sources/` (SwiftPM executable), `Info.plist`, `Assets/AppIcon.icns`, `package-app.sh`. `FunTheme.swift` is copied verbatim (no shared package).
+
+---
+
+## FAQ
+
+**Why is there no Dock icon?**  
+It is a menu extra. Click the photo.on.rectangle item on the **right** of the menu bar.
+
+**Does this need Screen Recording?**  
+No. It GETs HTML and the image URL.
+
+**Where did the URL list go?**  
+`~/Library/Application Support/Card Preview/recents.json` (20 URLs).
+
+**How do I stop it opening at login?**  
+Settings in the panel, or System Settings → General → Login Items → **Card Preview**.
+
+---
+
+<div align="center">
 
 [MIT](LICENSE)
+
+</div>
